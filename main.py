@@ -18,10 +18,7 @@ def on_mouse(event, x, y, flags, params):
     if event == cv2.EVENT_LBUTTONUP and len(boxes) != 4:
         ebox = [x, y]
         boxes.append(ebox)
-        print(boxes)
         
-
-
 while(1):
     k = cv2.waitKey(33)
 
@@ -41,27 +38,25 @@ while(1):
 
     if(len(boxes) >= 4):
 
+        coords = np.array(boxes)
+
         pts = np.array(boxes, np.int32)
 
         pts = pts.reshape((-1, 1, 2))
 
         isClosed = True
 
-
-        x1 = boxes[0][0]
-        y1 = boxes[0][1]
-        x2 = boxes[1][0]
-        y2 = boxes[1][1]
-
         line_thickness = 3
-        cv2.polylines(img, [pts], isClosed, (0, 255, 0), thickness=line_thickness)
+        cv2.polylines(img, [pts], isClosed, (0, 255, 0), line_thickness)
 
         cv2.imshow('image', img)
         cv2.waitKey(0)
 
+        warped = four_point_transform(image, coords )
+        cv2.imshow("Warped", warped)
+        cv2.waitKey(0)
 
-        
-        
+
         cv2.destroyAllWindows()
         break
 
