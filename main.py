@@ -5,19 +5,18 @@ import cv2
 
 ap = argparse.ArgumentParser()
 ap.add_argument("-i", "--image", help = "path to the image file")
-# ap.add_argument("-c", "--coords",
-	# help = "comma seperated list of source points")
 args = vars(ap.parse_args())
-
-image = cv2.imread(args["image"])
 
 boxes = []
 
 def on_mouse(event, x, y, flags, params):
+    img = cv2.imread(args["image"])
+    img = cv2.blur(img, (3,3))
 
     if event == cv2.EVENT_LBUTTONUP and len(boxes) != 4:
         ebox = [x, y]
         boxes.append(ebox)
+
         
 while(1):
     k = cv2.waitKey(33)
@@ -33,17 +32,19 @@ while(1):
 
         cv2.namedWindow('real image')
         cv2.setMouseCallback('real image', on_mouse, 0)
-        cv2.imshow('real image', img)
-        cv2.waitKey(0)
+        
+        for i in boxes:
+            cv2.circle(img, (i[0],i[1]), 10, (0,0,255), thickness=5, lineType=8, shift=0)
 
+        cv2.imshow('real image', img)
+        cv2.waitKey(10)
+              
     if(len(boxes) >= 4):
+        new_img = cv2.imread(args["image"])
 
         coords = np.array(boxes)
-
         pts = np.array(boxes, np.int32)
-
         pts = pts.reshape((-1, 1, 2))
-
         isClosed = True
 
         line_thickness = 3
@@ -52,24 +53,9 @@ while(1):
         cv2.imshow('image', img)
         cv2.waitKey(0)
 
-        warped = four_point_transform(image, coords )
+        warped = four_point_transform(new_img, coords )
         cv2.imshow("Warped", warped)
         cv2.waitKey(0)
 
-
         cv2.destroyAllWindows()
         break
-
-
-
-  
-
-
-
-
-# pts = np.array(eval(args["coords"]), dtype = "float32")
-
-# warped = four_point_transform(image, pts)
-
-# cv2.imshow("Original", image)
-# cv2.imshow("Warped", warped)
