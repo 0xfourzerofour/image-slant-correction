@@ -1,1 +1,1 @@
-##Directory to store test images##
+## Directory to store test images
